@@ -74,15 +74,18 @@ class TodoList(Resource):
         description = request.args.get('description')
         due = request.args.get('due')
 
-        task = Task.query.filter_by(title=title)
+        task = Task.query.filter_by(title=title).first()
+
         if description:
             task.description = description.replace("_", " ")
+
         if due:
             task.due = datetime.strptime(due, '%Y-%m-%d')
 
         db.session.commit()
 
-        return task.json()
+        return {'note': 'update successful',
+                'task': task.json()}
 
     #@jwt_required()
     def delete(self):

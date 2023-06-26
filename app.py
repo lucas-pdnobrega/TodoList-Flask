@@ -51,6 +51,7 @@ class TodoList(Resource):
 
         if todoList:
             return [todo.json() for todo in todoList]
+        
         return {'title': None}, 404
     
     #@jwt_required()
@@ -89,13 +90,19 @@ class TodoList(Resource):
 
     #@jwt_required()
     def delete(self):
+
         title = request.args.get('title')
+
         todo = Task.query.filter_by(title=title).first()
         if todo:
+
             db.session.delete(todo)
             db.session.commit()
-        return {'note': 'delete successful',
-                'task' : todo.json()}
+
+            return {'note': 'delete successful',
+                    'task' : todo.json()}
+        
+        return {'note': 'delete unsuccessfull'}, 404
 
 class AllTasks(Resource):
 

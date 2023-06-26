@@ -17,11 +17,6 @@ Migrate(app, db)
 api = Api(app)
 #jwt = JWT(app, authenticate, identity)
 
-#parser = reqparse.RequestParser()
-#parser.add_argument('title', type=str)
-#parser.add_argument('description', type=str, required=False)
-#parser.add_argument('due', type=str, required=False)
-
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80))

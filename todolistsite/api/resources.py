@@ -25,7 +25,7 @@ class TodoList(Resource):
 
         todo = Task(title=title,
                     description=None if not description else description.replace("_", " "),
-                    due=datetime.strptime(due, '%Y-%m-%d'))
+                    due=None if not due else datetime.strptime(due, '%Y-%m-%d'))
         
         db.session.add(todo)
         db.session.commit()

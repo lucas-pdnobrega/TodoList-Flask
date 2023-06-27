@@ -19,12 +19,12 @@ class TodoList(Resource):
     
     def post(self):
 
-        title = request.args.get('title')
-        description = request.args.get('description')
-        due = request.args.get('due')
+        title = request.json['title']
+        description = request.json['description']
+        due = request.json['due']
 
         todo = Task(title=title,
-                    description=None if not description else description.replace("_", " "),
+                    description=None if not description else description,
                     due=None if not due else datetime.strptime(due, '%Y-%m-%d'))
         
         db.session.add(todo)
@@ -33,15 +33,20 @@ class TodoList(Resource):
     
     def put(self):
 
-        title = request.args.get('title')
-        description = request.args.get('description')
-        due = request.args.get('due')
-        done = request.args.get('done')
+        target = request.args.get('title')
 
-        task = Task.query.filter_by(title=title).first()
+        title = request.json['title']
+        description = request.json['description']
+        due = request.json['due']
+        done = request.json['done']
+
+        task = Task.query.filter_by(title=target).first()
+
+        if title:
+            task.title = title
 
         if description:
-            task.description = description.replace("_", " ")
+            task.description = description
 
         if due:
             task.due = datetime.strptime(due, '%Y-%m-%d')

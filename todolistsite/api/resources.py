@@ -36,6 +36,7 @@ class TodoList(Resource):
         title = request.args.get('title')
         description = request.args.get('description')
         due = request.args.get('due')
+        done = request.args.get('done')
 
         task = Task.query.filter_by(title=title).first()
 
@@ -44,6 +45,9 @@ class TodoList(Resource):
 
         if due:
             task.due = datetime.strptime(due, '%Y-%m-%d')
+
+        if done:
+            task.done = True if done == 'True' else False
 
         db.session.commit()
 

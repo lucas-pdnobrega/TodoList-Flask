@@ -24,7 +24,7 @@ class TodoList(Resource):
         due = request.args.get('due')
 
         todo = Task(title=title,
-                    description=description.replace("_", " "),
+                    description=None if not description else description.replace("_", " "),
                     due=datetime.strptime(due, '%Y-%m-%d'))
         
         db.session.add(todo)

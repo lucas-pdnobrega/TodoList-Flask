@@ -10,7 +10,10 @@ class TodoList(Resource):
 
         title = request.args.get('title')
 
-        todoList = Task.query.filter_by(title=title)
+        if title:
+            todoList = Task.query.filter_by(title=title)
+        else:
+            todoList = Task.query.all()
 
         if todoList:
             return [todo.json() for todo in todoList]

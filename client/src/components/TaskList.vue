@@ -18,9 +18,10 @@
               <h5 class="card-title">{{ task.title }}</h5>
               <p class="card-text">{{ task.description }}</p>
               <p class="card-text">{{ task.due }}</p>
+              
               <p class="card-text">{{ task.done }}</p>
               <button @click="editTask(task)" type="button" class="btn btn-secondary">Edit</button>
-              <button @click="deleteTask(task)" type="button" class="btn btn-danger">Delete</button>
+              <button @click="removeTask(task)" type="button" class="btn btn-danger">Remove</button>
             </div>
             
             <div v-else class="card-body">
@@ -42,7 +43,7 @@
                   <input type="checkbox" class="form-check-input" id="checkDone" v-model="task.done">
                 </div>
                 <button @click="editTask(task)" type="button" class="btn btn-secondary">Submit</button>
-                <button @click="deleteTask(task)" type="button" class="btn btn-danger">Delete</button>
+                <button @click="removeTask(task)" type="button" class="btn btn-danger">Remove</button>
               </form>
             </div>
           </div>
@@ -65,12 +66,12 @@
     },
   
     methods: {
-      createTask() {
-        api.createTask(this.searchTitle)
-        this.fetchTasks()
+      async createTask() {
+        await api.createTask(this.searchTitle)
+        .then(this.fetchTasks())
       },
-      fetchTasks() {
-        api.getTasks()
+      async fetchTasks() {
+        await api.getTasks()
           .then(response => {
             this.tasks = response.data.map(task => ({
             ...task,
@@ -87,8 +88,8 @@
           });
       },
 
-      fetchTask(title) {
-        api.getTask(title)
+      async fetchTask(title) {
+        await api.getTask(title)
           .then(response => {
             this.tasks = response.data.map(task => ({
               task,
@@ -97,28 +98,28 @@
               title: task.title,
               description: task.description,
               due: task.due,
-              done: task.due
+              done: task.done
             }))
           })
           .catch(error => {
             console.error(error);
           });
       },
-      submitForm() {
+      async submitForm() {
         if (this.searchTitle) {
-          this.fetchTask(this.searchTitle);
+          await this.fetchTask(this.searchTitle);
         } else {
-          this.fetchTasks()
+          await this.fetchTasks()
         }
         },
-      deleteTask(task) {
-        api.deleteTask(task)
-        this.fetchTasks()
+      async removeTask(task) {
+        await api.deleteTask(task)
+        .then(this.fetchTasks())
       },
-      editTask(task) {
+      async editTask(task) {
         if (task.editing) {
-          api.updateTask(task)
-          this.fetchTasks()
+          await api.updateTask(task)
+          .then(this.fetchTasks())
           task.editing = false
         } else {
           task.editing = true

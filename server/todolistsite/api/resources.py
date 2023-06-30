@@ -10,6 +10,8 @@ class TodoList(Resource):
 
         title = request.args.get('title')
 
+        print(title)
+
         if title:
             todoList = Task.query.filter_by(title=title)
         else:
@@ -25,6 +27,8 @@ class TodoList(Resource):
         title = request.json['title']
         description = request.json['description']
         due = request.json['due']
+        
+        print(title, description, due)
 
         todo = Task(title=title,
                     description=None if not description else description,
@@ -36,14 +40,14 @@ class TodoList(Resource):
     
     def put(self):
 
-        target = request.args.get('title')
+        target = request.args.get('id')
 
         title = request.json['title']
         description = request.json['description']
         due = request.json['due']
         done = request.json['done']
 
-        task = Task.query.filter_by(title=target).first()
+        task = Task.query.filter_by(id=target).first()
 
         if title:
             task.title = title
@@ -54,8 +58,7 @@ class TodoList(Resource):
         if due:
             task.due = datetime.strptime(due, '%Y-%m-%d')
 
-        if done:
-            task.done = True if done == 'True' else False
+        task.done = True if done else False
 
         db.session.commit()
 
@@ -64,9 +67,9 @@ class TodoList(Resource):
 
     def delete(self):
 
-        title = request.args.get('title')
+        target = request.args.get('id')
 
-        todo = Task.query.filter_by(title=title).first()
+        todo = Task.query.filter_by(id=target).first()
         if todo:
 
             db.session.delete(todo)

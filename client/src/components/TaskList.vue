@@ -1,11 +1,12 @@
 <template>
   <div class="container">
     <h1>Task List</h1>
-    <form @submit.prevent="submitForm">
+    <form @submit.prevent>
         <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="Search..." aria-label="Search" aria-describedby="basic-addon2" v-model="searchTitle">
+          <input type="text" class="form-control" placeholder="Search or insert the task title..." aria-label="Search" aria-describedby="basic-addon2" v-model="searchTitle">
           <div class="input-group-append">
-            <button class="btn btn-outline-primary" type="submit">Search</button>
+            <button class="btn btn-outline-primary" type="submit" @click="submitForm">Search</button>
+            <button class="btn btn-outline-secondary" type="submit" @click="createTask">Create</button>
           </div>
       </div>
     </form>
@@ -13,13 +14,13 @@
 
           <div class="card" style="width: 18rem;" v-for="task in tasks" :key="task.id">
 
-            <div v-if="!task.editing" class="card-body" key="task.id">
+            <div v-if="!task.editing" class="card-body">
               <h5 class="card-title">{{ task.title }}</h5>
               <p class="card-text">{{ task.description }}</p>
               <p class="card-text">{{ task.due }}</p>
               <p class="card-text">{{ task.done }}</p>
               <button @click="editTask(task)" type="button" class="btn btn-secondary">Edit</button>
-              <button @click="deleteTask(task.title)" type="button" class="btn btn-danger">Delete</button>
+              <button @click="deleteTask(task)" type="button" class="btn btn-danger">Delete</button>
             </div>
             
             <div v-else class="card-body">
@@ -41,7 +42,7 @@
                   <input type="checkbox" class="form-check-input" id="checkDone" v-model="task.done">
                 </div>
                 <button @click="editTask(task)" type="button" class="btn btn-secondary">Submit</button>
-                <button @click="deleteTask(task.title)" type="button" class="btn btn-danger">Delete</button>
+                <button @click="deleteTask(task)" type="button" class="btn btn-danger">Delete</button>
               </form>
             </div>
           </div>
@@ -64,11 +65,16 @@
     },
   
     methods: {
+      createTask() {
+        api.createTask(this.searchTitle)
+        this.fetchTasks()
+      },
       fetchTasks() {
         api.getTasks()
           .then(response => {
             this.tasks = response.data.map(task => ({
             ...task,
+            id: task.id,
             editing: false,
             title: task.title,
             description: task.description,
@@ -80,11 +86,13 @@
             console.error(error);
           });
       },
+
       fetchTask(title) {
         api.getTask(title)
           .then(response => {
             this.tasks = response.data.map(task => ({
               task,
+              id: task.id,
               editing: false,
               title: task.title,
               description: task.description,
@@ -99,16 +107,14 @@
       submitForm() {
         this.fetchTask(this.searchTitle);
         },
-      deleteTask(title) {
-        api.deleteTask(title)
-        api.getTasks()
+      deleteTask(task) {
+        api.deleteTask(task)
+        this.fetchTasks()
       },
       editTask(task) {
         if (task.editing) {
-          task.title = task.title
-          task.description = task.description
-          task.due = task.due
-          task.done = task.done
+          api.updateTask(task)
+          this.fetchTasks()
           task.editing = false
         } else {
           task.editing = true

@@ -19,6 +19,7 @@ class Task(db.Model):
 
     def json(self):
         return {
+                'id' : self.id,
                 'title' : self.title,
                 'description' : self.description,
                 'due' : self.due.isoformat(),

@@ -19,16 +19,25 @@ export default {
     return apiClient.get(`/task?title=${title}`)
   },
 
-  createTask(task) {
-    return apiClient.post('/tasks', task);
+  createTask(title) {
+    return apiClient.post('/task', {
+      "title" : title,
+      "description" : false,
+      "due" : false
+    });
   },
 
-  updateTask(title) {
-    return apiClient.put(`/task?title=${title}`)
+  updateTask(task) {
+    return apiClient.put(`/task?id=${task.id}`, {
+      "title" : task.title,
+      "description" : task.description,
+      "due" : task.due,
+      "done" : task.done
+    })
   },
 
-  deleteTask(title) {
-    return apiClient.delete(`task?title=${title}`)
+  deleteTask(task) {
+    return apiClient.delete(`task?id=${task.id}`)
   }
 
   // Add other methods as per your API endpoints

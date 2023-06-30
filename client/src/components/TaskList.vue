@@ -105,7 +105,11 @@
           });
       },
       submitForm() {
-        this.fetchTask(this.searchTitle);
+        if (this.searchTitle) {
+          this.fetchTask(this.searchTitle);
+        } else {
+          this.fetchTasks()
+        }
         },
       deleteTask(task) {
         api.deleteTask(task)
